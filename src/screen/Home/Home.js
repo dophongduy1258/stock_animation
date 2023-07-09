@@ -68,7 +68,12 @@ const Home = () => {
     // };
     // End phóng to item và thu nhỏ để clear đi item
     //Di chuyển box theo hình vòng cung
-    return {};
+    return {
+      transform: [
+        {translateX: offsetXVal.value},
+        {translateY: offsetYVal.value},
+      ],
+    };
     //End di chuyển box theo hình vòng cung
   });
 
