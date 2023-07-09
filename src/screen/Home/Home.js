@@ -6,7 +6,7 @@ import {
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {arr_data} from '../../data';
 import Animated, {
   Easing,
@@ -22,6 +22,8 @@ import Animated, {
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 const Home = () => {
+  const [typeAnim, setTypeAnim] = useState(1);
+
   const offsetXVal = useSharedValue(0);
   const offsetYVal = useSharedValue(0);
   const opacityVal = useSharedValue(0);
@@ -30,51 +32,63 @@ const Home = () => {
   const borderRadiusVal = useSharedValue(0);
 
   const animatedStyle = useAnimatedStyle(() => {
-    // Di chuyển đến điểm bất kỳ bằng thay đổi vị trí XY +++++++++++++++++
-    // const translateX = withSpring(offsetX.value * 255, {
-    //   damping: 15,
-    //   mass: 1,
-    //   stiffness: 200,
-    // });
-    // const translateY = withSpring(offsetY.value * 255, {
-    //   damping: 15,
-    //   mass: 1,
-    //   stiffness: 200,
-    // });
-    // return {
-    //   transform: [{translateX}, {translateY}],
-    // };
-    //+++++++++++++++++++++ End di chuyển đến điểm bất kỳ bằng thay đổi vị trí XY
-    // Xoay box
-    // return {
-    //   transform: [
-    //     {
-    //       rotateZ: `${rotation.value}deg`,
-    //     },
-    //   ],
-    // };
-    // End xoay box
-    // Xoay box thành hình vuông và bo tròn
-    // const a = withTiming();
-    // return {
-    //   opacity: opacityVal.value,
-    //   borderRadius: borderRadiusVal.value,
-    //   transform: [{scale: scaleVal.value}, {rotate: `${rotationVal.value}deg`}],
-    // };
-    // End xoay box thành hình vuông và bo tròn
-    // Phóng to item và thu nhỏ để clear đi item
-    // return {
-    //   transform: [{scale: scaleVal.value}],
-    // };
-    // End phóng to item và thu nhỏ để clear đi item
-    //Di chuyển box theo hình vòng cung
-    return {
-      transform: [
-        {translateX: offsetXVal.value},
-        {translateY: offsetYVal.value},
-      ],
-    };
-    //End di chuyển box theo hình vòng cung
+    if (typeAnim == 1) {
+      // Di chuyển đến điểm bất kỳ bằng thay đổi vị trí XY +++++++++++++++++
+      const translateX = withSpring(offsetXVal.value * 255, {
+        damping: 15,
+        mass: 1,
+        stiffness: 200,
+      });
+      const translateY = withSpring(offsetYVal.value * 255, {
+        damping: 15,
+        mass: 1,
+        stiffness: 200,
+      });
+      return {
+        transform: [{translateX}, {translateY}],
+      };
+      //+++++++++++++++++++++ End di chuyển đến điểm bất kỳ bằng thay đổi vị trí XY
+    } else if (typeAnim == 2) {
+      // Xoay box
+      return {
+        transform: [
+          {
+            rotateZ: `${rotationVal.value}deg`,
+          },
+        ],
+      };
+      // End xoay box
+    } else if (typeAnim == 3) {
+      // Xoay box thành hình vuông và bo tròn
+      const a = withTiming();
+      return {
+        opacity: opacityVal.value,
+        borderRadius: borderRadiusVal.value,
+        transform: [
+          {scale: scaleVal.value},
+          {rotate: `${rotationVal.value}deg`},
+        ],
+      };
+      // End xoay box thành hình vuông và bo tròn
+    } else if (typeAnim == 4) {
+      // Phóng to item và thu nhỏ để clear đi item
+      return {
+        transform: [{scale: scaleVal.value}],
+      };
+      // End phóng to item và thu nhỏ để clear đi item
+    } else if (typeAnim == 5) {
+    } else if (typeAnim == 6) {
+      // loại 6
+      return {
+        transform: [
+          {translateX: offsetXVal.value},
+          {translateY: offsetYVal.value},
+          {scale: scaleVal.value},
+          {rotate: `${rotationVal.value}deg`},
+        ],
+      };
+      //End loại 6
+    }
   });
 
   const RenderButton = ({item}) => {
@@ -82,12 +96,13 @@ const Home = () => {
     return (
       <TouchableOpacity
         onPress={() => {
+          setTypeAnim(item.type);
           if (item.type == 1) {
-            offsetX.value = Math.random();
-            offsetY.value = Math.random();
+            offsetXVal.value = Math.random();
+            offsetYVal.value = Math.random();
           } else if (item.type == 2) {
             // lắc đều box
-            rotation.value = withSequence(
+            rotationVal.value = withSequence(
               withTiming(-10, {duration: 50}),
               withRepeat(withTiming(60, {duration: 100}), 6, true),
               withTiming(0, {duration: 50}),
@@ -118,7 +133,38 @@ const Home = () => {
               withDelay(200, withTiming(0, {duration: 200})),
             );
           } else if (item.type == 5) {
-            offsetXVal.value = withSequence(withTiming(50));
+            // offsetXVal.value = withSequence(
+            //   withTiming(280, {easing: Easing.bezier(0.5, 1, 0.89, 1)}),
+            //   withDelay(
+            //     200,
+            //     withTiming(0, {
+            //       // easing: Easing.bezier(0.33, 1, 0.68, 1),
+            //       easing: Easing.bezier(0.25, 1, 0.5, 1),
+            //       // duration: 500,
+            //     }),
+            //   ),
+            // );
+            // offsetYVal.value = withSequence(
+            //   withTiming(250),
+            //   // withTiming(380, {easing: Easing.bezier(0.25, 1, 0.5, 1)}),
+            //   withDelay(
+            //     200,
+            //     withTiming(400, {
+            //       easing: Easing.bezier(0.25, 1, 0.5, 1),
+            //       // duration: 500,
+            //     }),
+            //   ),
+            // );
+          } else if (item.type == 6) {
+            offsetYVal.value = withSequence(
+              withTiming(50),
+              withDelay(200, withSpring(-150)),
+            );
+            scaleVal.value = withSequence(
+              withDelay(600, withSpring(2)),
+              withDelay(100, withTiming(0, {duration: 500})),
+            );
+            rotationVal.value = withDelay(700, withTiming(360));
           }
         }}
         style={{
